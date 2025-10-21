@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClauseEase | Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --light-lavender: #E6E6FA;
+      --medium-lavender: #B39EB5;
+      --dark-lavender: #6A5ACD;
+      --white: #FFFFFF;
+      --text-dark: #2E2E2E;
+      --shadow: rgba(0,0,0,0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--light-lavender);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    nav {
+      background-color: var(--dark-lavender);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 60px;
+      font-family: 'Poppins', sans-serif;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-left {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .nav-right a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-right a:hover {
+      color: var(--medium-lavender);
+    }
+
+    #theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      color: white;
+      padding: 0;
+      font-family: inherit;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Container */
+    .container {
+      background-color: var(--white);
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .section h3 {
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .text-box {
+      background-color: #f8f4ff;
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid var(--medium-lavender);
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--text-dark);
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 12px;
+      background-color: var(--dark-lavender);
+      color: var(--white);
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: var(--medium-lavender);
+      transform: scale(1.03);
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      background-color: #1e1e2f;
+      color: #f0f0f0;
+    }
+
+    body.dark-mode .container {
+      background-color: #2a2a3f;
+    }
+
+    body.dark-mode .section h3,
+    body.dark-mode .text-box {
+      color: #f0f0f0;
+    }
+
+    body.dark-mode .text-box {
+      background-color: #3a3a5a;
+      border-color: #5B3CB3;
+    }
+
+    body.dark-mode button {
+      background-color: #5B3CB3;
+    }
+
+    body.dark-mode nav {
+      background-color: #2a2a3f;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="nav-left">ClauseEase</div>
+
+  <div class="nav-right">
+    <a href="{{ url_for('document_ingestion') }}">Upload</a>
+    <a href="{{ url_for('text_processing') }}">Text Processing</a>
+    <a href="{{ url_for('text_simplification') }}">Simplify</a>
+    <button id="theme-toggle">🌙</button>
+    <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
+</nav>
+
+<!-- Main content -->
+<div class="container">
+  <h1 style="text-align:center; margin-bottom:20px;">Preview Page</h1>
+
+  <div class="section">
+      <h3>Legal Terms Detected: {{ terms_count }}</h3>
+      <p>{{ legal_terms | join(', ') }}</p>
+  </div>
+
+  <div class="section">
+      <h3>Flesch-Kincaid Readability Score</h3>
+      <p>{{ readability_score }}</p>
+  </div>
+
+  <div class="section">
+      <h3>Simplified Text</h3>
+      <div class="text-box">{{ simplified_text | safe }}</div>
+  </div>
+
+  <form action="{{ url_for('download_report') }}" method="POST">
+      <input type="hidden" name="original_text" value="{{ original_text }}">
+      <input type="hidden" name="simplified_text" value="{{ simplified_text }}">
+      {% for term in legal_terms %}
+          <input type="hidden" name="legal_terms[]" value="{{ term }}">
+      {% endfor %}
+      <input type="hidden" name="readability_score" value="{{ readability_score }}">
+      <button type="submit">Download Simplified Report</button>
+  </form>
+</div>
+
+<script>
+  const toggle = document.getElementById('theme-toggle');
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark-mode');
+      toggle.textContent = '☀️';
+    }
+  });
+</script>
+
+</body>
+</html>

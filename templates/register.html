@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClauseEase | Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --light-lavender: #E6E6FA;
+  --medium-lavender: #B39EB5;
+  --dark-lavender: #6A5ACD;
+  --white: #FFFFFF;
+  --text-dark: #2E2E2E;
+  --text-light: #555555;
+  --success: #2ECC71;
+  --error: #DC3545;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+  background: var(--light-lavender);
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh;
+}
+
+.register-container {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  width: 420px; 
+  padding: 40px 35px; 
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.logo {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: var(--dark-lavender);
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.register-container h2 {
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+form { display: flex; flex-direction: column; gap: 15px; }
+
+input {
+  padding: 12px 15px; 
+  border-radius: 12px; 
+  border: 1px solid var(--medium-lavender);
+  font-size: 15px; 
+  outline: none; 
+  transition: 0.3s ease;
+}
+
+input:focus { 
+  border-color: var(--dark-lavender); 
+  box-shadow: 0 0 4px rgba(106,90,205,0.4); 
+}
+
+.btn-register {
+  background: var(--dark-lavender); 
+  color: var(--white);
+  font-weight: 600; 
+  border: none; 
+  border-radius: 12px;
+  padding: 12px; 
+  cursor: pointer; 
+  transition: 0.3s ease;
+}
+
+.btn-register:hover { 
+  background: #5B3CB3; 
+  transform: scale(1.03); 
+}
+
+.bottom-text { 
+  margin-top: 15px; 
+  color: var(--text-light); 
+  font-size: 14px; 
+}
+
+.bottom-text a { 
+  color: var(--medium-lavender); 
+  text-decoration: none; 
+  font-weight: 500; 
+}
+
+.bottom-text a:hover { 
+  text-decoration: underline; 
+}
+
+.error-msg, .success-msg {
+  padding: 10px; 
+  border-radius: 10px; 
+  margin-bottom: 10px; 
+  font-size: 14px; 
+  color: var(--white);
+}
+
+.error-msg { background-color: var(--error); }
+.success-msg { background-color: var(--success); }
+</style>
+
+</head>
+<body>
+  <div class="register-container">
+    <div class="logo">ClauseEase</div>
+    <h2>Create Your Account</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="{{ 'error-msg' if category == 'error' else 'success-msg' }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <input type="text" name="username" placeholder="Choose Username" required />
+      <input type="password" name="password" placeholder="Choose Password" required />
+      <input type="password" name="confirm_password" placeholder="Confirm Password" required />
+      <button type="submit" class="btn-register">Register</button>
+    </form>
+
+    <div class="bottom-text">
+      Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+    </div>
+  </div>
+</body>
+</html>

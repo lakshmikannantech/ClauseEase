@@ -1,0 +1,44 @@
+<!-- templates/header.html -->
+<style>
+    header {
+        background-color: #6A5ACD; /* Dark lavender */
+        color: white;
+        padding: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .nav-links a:hover {
+        color: #E6E6FA; /* light lavender */
+    }
+
+    .brand {
+        font-size: 20px;
+        font-weight: bold;
+    }
+</style>
+
+<header>
+    <div class="brand">ClauseEase</div>
+    <div class="nav-links">
+        <a href="{{ url_for('document_ingestion') }}">Upload</a>
+        <a href="{{ url_for('text_processing') }}">Text Processing</a>
+        <a href="{{ url_for('text_simplification') }}">Simplify</a>
+        <a href="{{ url_for('preview') }}">Preview</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</header>

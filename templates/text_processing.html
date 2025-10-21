@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClauseEase | Text Processing</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Inter&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --light-lavender: #E6E6FA;
+  --medium-lavender: #B39EB5;
+  --dark-lavender: #6A5ACD;
+  --white: #FFFFFF;
+  --text-dark: #2E2E2E;
+  --text-light: #555555;
+  --success: #2ECC71;
+  --error: #DC3545;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+body {
+  background-color: var(--light-lavender);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+/* Navbar */
+nav {
+  background-color: var(--dark-lavender);
+  color: var(--white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 15px 60px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.nav-left {
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.nav-right a {
+  color: var(--white);
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 25px;
+  transition: color 0.3s ease;
+}
+
+.nav-right a:hover {
+  color: var(--medium-lavender);
+}
+
+/* Card Layout */
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  padding: 40px;
+  width: 700px;
+  max-width: 95%;
+  margin-top: 60px;
+  animation: fadeIn 0.8s ease;
+  color: var(--text-dark); /* default text color */
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+h2 {
+  color: var(--text-dark);
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+p {
+  color: var(--text-light);
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* Results Sections */
+.result-section {
+  margin-bottom: 25px;
+}
+
+.result-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+.result {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid var(--medium-lavender);
+  border-radius: 12px;
+  padding: 15px;
+  background-color: #f8f4ff;
+  white-space: pre-wrap;
+  margin-bottom: 10px;
+  color: var(--text-dark); /* ensure processed text readable in light mode */
+}
+
+/* Legend */
+.legend {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.legend span {
+  display: inline-block;
+  padding: 5px 12px;
+  margin-right: 8px;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.complex { background-color: red; }
+.medium { background-color: orange; }
+.simple { background-color: green; }
+.pattern { background-color: blue; }
+
+/* NEXT Button */
+.next-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+button {
+  background: var(--dark-lavender);
+  color: var(--white);
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 30px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+button:hover {
+  background: #5B3CB3;
+  transform: scale(1.03);
+}
+
+/* Flash Messages */
+.message {
+  margin-top: 15px;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.error-msg { background-color: var(--error); color: var(--white); }
+.success-msg { background-color: var(--success); color: var(--white); }
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #1e1e2f;
+  color: #f0f0f0;
+}
+
+body.dark-mode .card {
+  background-color: #2a2a3f;
+  color: #f0f0f0;
+}
+
+body.dark-mode .card h2,
+body.dark-mode .card p,
+body.dark-mode .result-title {
+  color: #f0f0f0;
+}
+
+body.dark-mode .result {
+  background-color: #3a3a5a;
+  border-color: #5B3CB3;
+  color: #f0f0f0; /* processed text */
+}
+
+body.dark-mode .legend span { color: #fff; }
+
+body.dark-mode .message { color: #f0f0f0; }
+body.dark-mode .success-msg { background-color: #28a745; color: #fff; }
+body.dark-mode .error-msg { background-color: #dc3545; color: #fff; }
+
+body.dark-mode nav { background-color: #2a2a3f; }
+body.dark-mode .nav-right a { color: #f0f0f0; }
+body.dark-mode .nav-right a:hover { color: #5B3CB3; }
+
+</style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-left">ClauseEase</div>
+    <div class="nav-right">
+      <a href="{{ url_for('document_ingestion') }}">Upload</a>
+      <a href="{{ url_for('text_simplification') }}">Simplify</a>
+      <a href="{{ url_for('preview') }}">Preview</a>
+      <button id="theme-toggle" style="margin-left:15px; background:none; border:none; cursor:pointer; font-size:16px; color:white;">🌙</button>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Card -->
+  <div class="card">
+    <h2>Text Processing - Legal Term Highlighting</h2>
+    <p>Welcome, {{ session['username'] }}!</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="message {{ 'error-msg' if category == 'error' else 'success-msg' }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if highlighted_text %}
+      <div class="result-section">
+        <div class="result-title">Highlighted Text:</div>
+        <div class="result">{{ highlighted_text|safe }}</div>
+      </div>
+
+      {% if terms %}
+        <div class="result-section">
+          <div class="result-title">Terms Found:</div>
+          <p>{{ terms|join(', ') }}</p>
+        </div>
+      {% endif %}
+
+      {% if clauses %}
+        <div class="result-section">
+          <div class="result-title">Clauses Detected:</div>
+          <p>{{ clauses|join(', ') }}</p>
+        </div>
+      {% endif %}
+
+      {% if text_preview %}
+        <div class="result-section">
+          <div class="result-title">Text Preview:</div>
+          <div class="result">{{ text_preview }}</div>
+        </div>
+      {% endif %}
+
+      <!-- Legend -->
+      <div class="legend">
+        <p>Level: 
+          <span class="complex">Complex</span>
+          <span class="medium">Medium</span>
+          <span class="simple">Simple</span>
+          <span class="pattern">Legal Pattern</span>
+        </p>
+      </div>
+
+      <!-- NEXT Button -->
+      <div class="next-btn-container">
+        <form action="{{ url_for('text_simplification') }}" method="GET">
+          <input type="hidden" name="input_text" value="{{ request.form.get('input_text', '') }}">
+          <button type="submit">NEXT</button>
+        </form>
+      </div>
+
+    {% else %}
+      <form action="{{ url_for('text_processing') }}" method="POST">
+        <textarea id="input_text" name="input_text" placeholder="Enter legal text here...">{{ request.form.get('input_text', '') }}</textarea>
+        <button type="submit">Process Text</button>
+      </form>
+
+      <div class="legend">
+        <p>Level: 
+          <span class="complex">Complex</span>
+          <span class="medium">Medium</span>
+          <span class="simple">Simple</span>
+          <span class="pattern">Legal Pattern</span>
+        </p>
+      </div>
+    {% endif %}
+  </div>
+
+<script>
+const toggle = document.getElementById('theme-toggle');
+toggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+    localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        toggle.textContent = '☀️';
+    }
+});
+</script>
+
+</body>
+</html>
